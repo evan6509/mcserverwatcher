@@ -1,0 +1,12 @@
+{
+  "refresh_seconds": 15,
+  "request_timeout_seconds": 3,
+  "servers": [
+    {
+      "id": "local",
+      "name": "My Minecraft Server",
+      "address": "localhost:25565",
+      "enable_query": false
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101812">
+    <title>Minecraft Server Watcher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  </head>
+  <body data-refresh-seconds="{{ refresh_seconds }}">
+    <main>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Live server status</p>
+          <h1>Minecraft Server Watcher</h1>
+          <p class="subtitle">Player counts, names, versions, and response times in one place.</p>
+        </div>
+        <div class="refresh-wrap">
+          <button id="refresh" type="button">Refresh now</button>
+          <p id="last-updated" aria-live="polite">Loading…</p>
+        </div>
+      </header>
+
+      <section id="summary" class="summary" aria-label="Server summary"></section>
+      <section id="servers" class="server-grid" aria-live="polite">
+        <article class="server-card loading-card">
+          <div class="skeleton wide"></div>
+          <div class="skeleton count"></div>
+          <div class="skeleton"></div>
+        </article>
+      </section>
+    </main>
+    <footer>
+      Refreshes every {{ refresh_seconds }} seconds · Minecraft Java Edition
+    </footer>
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </body>
+</html>
