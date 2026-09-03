@@ -50,6 +50,11 @@ mcserverwatcher --host 0.0.0.0 --port 8080
 The configuration path can be changed with `--config` or the `MCSW_CONFIG`
 environment variable.
 
+The dashboard footer shows the Git commit for the running build. Set
+`MCSW_BUILD_COMMIT` to the full commit SHA in packaged or container builds;
+when it is unset, the app uses common deployment-provider commit variables and
+then falls back to the current local Git checkout.
+
 ## Player names and Query
 
 Every modern Java server exposes a player count through Server List Ping. The
@@ -71,8 +76,10 @@ timeout before falling back to the status sample.
 
 ## Last connection
 
-The watcher compares the player names returned by consecutive checks. When a
-name appears that was not present in the prior check, the dashboard records the
+The server process checks every configured Minecraft server in the background
+at the configured `refresh_seconds` interval, even when the dashboard is not
+open. It compares the player names returned by consecutive checks. When a name
+appears that was not present in the prior check, the dashboard records the
 player and the time they were first observed. If several players appear between
 checks, they are shown together because the status protocols do not expose the
 exact order or login time.
@@ -84,8 +91,9 @@ lists.
 
 ## API
 
-- `GET /api/servers` checks every configured server.
-- `GET /api/servers/<id>` checks one server.
+- `GET /api/servers` returns the latest background snapshots.
+- `GET /api/servers/<id>` returns one server's latest snapshot.
+- `POST /api/servers/refresh` immediately checks every configured server.
 - `GET /api/health` verifies that the web process is running.
 
 Example:

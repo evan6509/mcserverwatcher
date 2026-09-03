@@ -79,7 +79,8 @@ h3 { font-size: 0.8rem; letter-spacing: 0.08em; margin: 0 0 10px; text-transform
 .skeleton.count { height: 64px; width: 35%; }
 @keyframes pulse { to { opacity: 0.42; } }
 
-footer { color: #6f7d72; font-size: 0.78rem; padding: 20px 16px 36px; text-align: center; }
+footer { align-items: center; color: #6f7d72; display: flex; flex-wrap: wrap; font-size: 0.78rem; gap: 8px 14px; justify-content: center; padding: 20px 16px 36px; text-align: center; }
+.build-commit { border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 3px 7px; }
 
 @media (max-width: 680px) {
   main { padding-top: 42px; }

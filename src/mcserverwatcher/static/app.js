@@ -101,11 +101,14 @@ function renderSummary(servers) {
     <div><strong>${players}</strong><span> players online</span></div>`;
 }
 
-async function loadServers() {
+async function loadServers(forceRefresh = false) {
   refreshButton.disabled = true;
   refreshButton.textContent = "Refreshing…";
   try {
-    const response = await fetch("/api/servers", { cache: "no-store" });
+    const response = await fetch(
+      forceRefresh ? "/api/servers/refresh" : "/api/servers",
+      { cache: "no-store", method: forceRefresh ? "POST" : "GET" },
+    );
     if (!response.ok) throw new Error(`The API returned HTTP ${response.status}.`);
     const data = await response.json();
     renderSummary(data.servers);
@@ -125,6 +128,6 @@ async function loadServers() {
   }
 }
 
-refreshButton.addEventListener("click", loadServers);
+refreshButton.addEventListener("click", () => loadServers(true));
 loadServers();
 window.setInterval(loadServers, refreshSeconds * 1000);
