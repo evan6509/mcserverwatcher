@@ -2,7 +2,8 @@
 
 A small Python web server that displays the status of one or more Minecraft
 Java Edition servers. It includes a browser dashboard and a JSON API for player
-counts, player names, latency, version, and MOTD.
+counts, player names, the last observed player connection, latency, version,
+and MOTD.
 
 ## Set up
 
@@ -67,6 +68,19 @@ Open that UDP port in the server firewall, restart Minecraft, and then set
 `"enable_query": true` for that server in `servers.json`. Do not enable the
 option when Query is unavailable, because each refresh will wait for its
 timeout before falling back to the status sample.
+
+## Last connection
+
+The watcher compares the player names returned by consecutive checks. When a
+name appears that was not present in the prior check, the dashboard records the
+player and the time they were first observed. If several players appear between
+checks, they are shown together because the status protocols do not expose the
+exact order or login time.
+
+This observation history starts when the watcher process starts and is kept in
+memory. Without Query, player names may be hidden or sampled by the Minecraft
+server, so connection detection is best-effort. Enable Query for reliable player
+lists.
 
 ## API
 

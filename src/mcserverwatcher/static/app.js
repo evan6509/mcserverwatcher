@@ -26,6 +26,24 @@ function playerMarkup(players) {
   return `<ul class="player-list">${names}</ul><p class="list-note">${note}</p>`;
 }
 
+function lastConnectionMarkup(connection) {
+  if (!connection || !connection.names?.length) {
+    return '<p class="empty-list">No player connections observed yet.</p>';
+  }
+
+  const observedAt = new Date(connection.observed_at);
+  const timeLabel = Number.isNaN(observedAt.getTime())
+    ? connection.observed_at
+    : observedAt.toLocaleString();
+  const names = connection.names.map(escapeHtml).join(", ");
+  const verb = connection.names.length === 1 ? "was" : "were";
+  return `
+    <p class="last-connection">
+      <strong>${names}</strong>
+      <span>${verb} observed connecting <time datetime="${escapeHtml(connection.observed_at)}">${escapeHtml(timeLabel)}</time></span>
+    </p>`;
+}
+
 function serverCard(server) {
   if (!server.online) {
     return `
@@ -35,6 +53,10 @@ function serverCard(server) {
           <span class="status-pill">Offline</span>
         </div>
         <p class="error-message">${escapeHtml(server.error || "The server did not respond.")}</p>
+        <div class="connection-block">
+          <h3>Last connection</h3>
+          ${lastConnectionMarkup(server.last_connection)}
+        </div>
       </article>`;
   }
 
@@ -63,6 +85,10 @@ function serverCard(server) {
       </dl>
       <h3>Players</h3>
       ${playerMarkup(players)}
+      <div class="connection-block">
+        <h3>Last connection</h3>
+        ${lastConnectionMarkup(server.last_connection)}
+      </div>
       ${warning}
     </article>`;
 }

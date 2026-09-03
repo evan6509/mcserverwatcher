@@ -69,6 +69,10 @@ h3 { font-size: 0.8rem; letter-spacing: 0.08em; margin: 0 0 10px; text-transform
 .list-note { font-size: 0.72rem; }
 .error-message { color: #ebb0b0; margin-top: 28px; overflow-wrap: anywhere; }
 .warning-message { border-left: 2px solid var(--amber); color: #dec99e; padding-left: 9px; }
+.connection-block { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
+.last-connection { display: flex; flex-direction: column; font-size: 0.85rem; gap: 3px; margin: 0; }
+.last-connection span { color: var(--muted); }
+.last-connection time { color: #c6d0c8; }
 
 .skeleton { animation: pulse 1.3s infinite alternate; background: #2a342c; border-radius: 5px; height: 18px; margin-bottom: 22px; width: 60%; }
 .skeleton.wide { width: 90%; }

@@ -9,8 +9,9 @@ def namespace(**kwargs):
 
 
 class FakeServer:
-    def __init__(self, *, query_error=None):
+    def __init__(self, *, query_error=None, names=None):
         self.query_error = query_error
+        self.names = names or ["Alex", "Steve"]
 
     def status(self, *, tries):
         assert tries == 1
@@ -19,9 +20,9 @@ class FakeServer:
             motd=namespace(to_plain=lambda: "A test server"),
             version=namespace(name="1.21.8", protocol=772),
             players=namespace(
-                online=2,
+                online=len(self.names),
                 max=20,
-                sample=[namespace(name="Alex")],
+                sample=[namespace(name=name) for name in self.names[:1]],
             ),
         )
 
@@ -29,7 +30,7 @@ class FakeServer:
         assert tries == 1
         if self.query_error:
             raise self.query_error
-        return namespace(players=namespace(list=["Alex", "Steve"]))
+        return namespace(players=namespace(list=self.names))
 
 
 def test_status_uses_full_query_player_list():
@@ -74,3 +75,34 @@ def test_offline_server_returns_a_snapshot():
     assert result["online"] is False
     assert result["error"] == "connection refused"
     assert result["players"] is None
+    assert result["last_connection"] is None
+
+
+def test_status_tracks_the_last_observed_connection_across_checks():
+    times = iter([
+        "2026-09-03T12:00:00Z",
+        "2026-09-03T12:00:15Z",
+        "2026-09-03T12:00:30Z",
+    ])
+    fake = FakeServer(names=["Alex"])
+    monitor = MinecraftMonitor(
+        2,
+        server_factory=lambda *_args, **_kwargs: fake,
+        clock=lambda: next(times),
+    )
+    config = ServerConfig("test", "Test", "example.test", enable_query=True)
+
+    first = monitor.check(config)
+    unchanged = monitor.check(config)
+    fake.names.append("Steve")
+    joined = monitor.check(config)
+
+    assert first["last_connection"] == {
+        "names": ["Alex"],
+        "observed_at": "2026-09-03T12:00:00Z",
+    }
+    assert unchanged["last_connection"] == first["last_connection"]
+    assert joined["last_connection"] == {
+        "names": ["Steve"],
+        "observed_at": "2026-09-03T12:00:30Z",
+    }
